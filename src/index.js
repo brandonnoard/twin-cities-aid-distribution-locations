@@ -53,8 +53,6 @@ const $locationsButton = document.getElementById('locations-toggle-button');
 const $body = document.body;
 
 mapboxgl.accessToken = Config.accessToken
-const airtableApiKey = Config.airtableApiKey
-const airtableBaseName = Config.airtableBaseName
 
 // we're using the map color from google sheet to indicate location status,
 // but using a different display color for accessibility. so the original
@@ -135,19 +133,21 @@ document.getElementById('close-covid-banner-button').addEventListener('click', (
 let locations = []
 let sitesList = []
 
-const base = new Airtable({ apiKey: airtableApiKey }).base(airtableBaseName)
-function loadSites() {
+function loadSites(Config) {
+  const base = new Airtable({ apiKey: Config.airtableApiKey }).base(Config.airtableBaseName)
+
   base('mutual_aid_locations')
     .select({sort: [{field: "org_name", direction: "asc"}]})
-    .eachPage((records, fetchNextPage) => {
-      sitesList = sitesList.concat(records)
-      fetchNextPage()
-    }, (error) => {
-      console.log(error) // TODO - proper error handling
-    }
-  )
+    .all((error, records) => {
+      if (error) {
+        console.log(error)
+      }
+      else {
+        sitesList = sitesList.concat(records)
+      }
+    })
 }
-loadSites()
+loadSites(Config)
 
 // Alternative base style: 'mapbox://styles/mapbox/light-v10',
 // See also: https://docs.mapbox.com/mapbox-gl-js/example/setstyle/
