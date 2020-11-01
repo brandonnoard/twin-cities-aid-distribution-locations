@@ -25,6 +25,7 @@ import { TrackJS } from 'trackjs';
 import validate, { LOCATION_SCHEMA } from "./js/validator";
 import replaceAll from 'string.prototype.replaceall'
 import PullToRefresh from 'pulltorefreshjs'
+import Airtable from 'airtable'
 
 //Add TrackJS Agent
 if(import.meta.env.MODE === 'production'){
@@ -134,25 +135,19 @@ document.getElementById('close-covid-banner-button').addEventListener('click', (
 let locations = []
 let sitesList = []
 
-
-var Airtable = require('airtable');
-var base = new Airtable({ apiKey: airtableApiKey }).base(airtableBaseName);
+const base = new Airtable({ apiKey: airtableApiKey }).base(airtableBaseName)
 function loadSites() {
-
-    base('mutual_aid_locations')
-        .select({sort: [{field: "org_name", direction: "asc"}]})
-        .eachPage(function page(records, fetchNextPage) {
-
-          sitesList = sitesList.concat(records)
-          fetchNextPage();
-
-        }, function done(error) {
-          console.log(error); // TODO - proper error handling
-        }
-    );
-};
-
-loadSites();
+  base('mutual_aid_locations')
+    .select({sort: [{field: "org_name", direction: "asc"}]})
+    .eachPage((records, fetchNextPage) => {
+      sitesList = sitesList.concat(records)
+      fetchNextPage()
+    }, (error) => {
+      console.log(error) // TODO - proper error handling
+    }
+  )
+}
+loadSites()
 
 // Alternative base style: 'mapbox://styles/mapbox/light-v10',
 // See also: https://docs.mapbox.com/mapbox-gl-js/example/setstyle/
