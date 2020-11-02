@@ -1,9 +1,10 @@
 import { Selector } from 'testcafe'
-import { beforeEachTest } from '../helpers'
+import { beforeEachTest, airtableHook } from '../helpers'
 
 fixture `Help Window`
   .page `http://localhost:8080/`
   .beforeEach(beforeEachTest)
+  .requestHooks(airtableHook)
 
 test('Opening and closing Help Window', async t => {
   await t

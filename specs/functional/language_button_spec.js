@@ -1,9 +1,10 @@
 import { Selector } from 'testcafe'
-import { beforeEachTest } from '../helpers'
+import { beforeEachTest, mockedAirtableResult } from '../helpers'
 
 fixture `Language Selection`
   .page `http://localhost:8080/`
   .beforeEach(beforeEachTest)
+  .requestHooks(mockedAirtableResult)
 
 // Changing the language to Spanish changes things on the page.
 test('Switch language to Spanish', async t => {
